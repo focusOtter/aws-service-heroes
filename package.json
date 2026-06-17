@@ -9,7 +9,16 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@ai-sdk/google": "^3.0.83",
+    "@auth0/nextjs-auth0": "^4.22.0",
+    "@aws-sdk/client-bedrock-runtime": "^3.1070.0",
+    "@aws-sdk/client-dynamodb": "^3.1070.0",
+    "@aws-sdk/client-s3": "^3.1070.0",
+    "@aws-sdk/lib-dynamodb": "^3.1070.0",
+    "@vercel/oidc-aws-credentials-provider": "^3.1.4",
+    "ai": "^6.0.207",
     "next": "16.2.9",
+    "octokit": "^5.0.5",
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },
