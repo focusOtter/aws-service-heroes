@@ -47,9 +47,11 @@ async function downscaleImage(file: File): Promise<File> {
 export default function HeroForm({
   defaultName,
   services,
+  videoEnabled,
 }: {
   defaultName: string
   services: Option[]
+  videoEnabled: boolean
 }) {
   const [photo, setPhoto] = useState<File | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
@@ -221,11 +223,12 @@ export default function HeroForm({
           </h1>
         </div>
         <p className="mt-2 text-zinc-400">
-          Compositing with Gemini — your image lands in a few seconds, then the
-          animation renders in the background. Here&apos;s what&apos;s happening.
+          Compositing with Gemini — your image lands in a few seconds
+          {videoEnabled && ', then the animation renders in the background'}.
+          Here&apos;s what&apos;s happening.
         </p>
         <div className="mt-8">
-          <ArchitectureStory />
+          <ArchitectureStory videoEnabled={videoEnabled} />
         </div>
       </div>
     )
