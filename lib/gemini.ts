@@ -5,10 +5,14 @@ const google = createGoogleGenerativeAI({
   apiKey: process.env.GEMINI_API_KEY,
 })
 
-// With no GEMINI_API_KEY, route through Vercel AI Gateway (auth via the
+const hasGoogleKey = Boolean(
+  process.env.GEMINI_API_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY,
+)
+
+// With no Google key, route through Vercel AI Gateway (auth via the
 // deployment's OIDC token on Vercel, or AI_GATEWAY_API_KEY locally).
 function imageModel(modelId: string) {
-  return process.env.GEMINI_API_KEY ? google(modelId) : gateway(`google/${modelId}`)
+  return hasGoogleKey ? google(modelId) : gateway(`google/${modelId}`)
 }
 
 const MODEL = process.env.GEMINI_MODEL ?? 'gemini-3-pro-image'
