@@ -11,6 +11,7 @@ type Result = {
   videoUrl?: string
   issueUrl?: string
   videoFailed?: boolean
+  videoEnabled?: boolean
 }
 
 // Long edge cap for the uploaded selfie. iPhone/iPad photos are routinely
@@ -46,9 +47,11 @@ async function downscaleImage(file: File): Promise<File> {
 export default function HeroForm({
   defaultName,
   services,
+  videoEnabled,
 }: {
   defaultName: string
   services: Option[]
+  videoEnabled: boolean
 }) {
   const [photo, setPhoto] = useState<File | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
@@ -82,7 +85,13 @@ export default function HeroForm({
   // After the image is back, the video is still rendering async (completion
   // Lambda). Poll the job until the video lands so we can swap it in.
   useEffect(() => {
-    if (status !== 'done' || !result || result.videoUrl || result.videoFailed) {
+    if (
+      status !== 'done' ||
+      !result ||
+      result.videoEnabled === false ||
+      result.videoUrl ||
+      result.videoFailed
+    ) {
       return
     }
     const t = setInterval(async () => {
@@ -214,11 +223,12 @@ export default function HeroForm({
           </h1>
         </div>
         <p className="mt-2 text-zinc-400">
-          Compositing with Gemini — your image lands in a few seconds, then the
-          animation renders in the background. Here&apos;s what&apos;s happening.
+          Compositing with Gemini — your image lands in a few seconds
+          {videoEnabled && ', then the animation renders in the background'}.
+          Here&apos;s what&apos;s happening.
         </p>
         <div className="mt-8">
-          <ArchitectureStory />
+          <ArchitectureStory videoEnabled={videoEnabled} />
         </div>
       </div>
     )
@@ -230,7 +240,7 @@ export default function HeroForm({
       <div className="mx-auto max-w-2xl px-6 py-12 text-center">
         <h1 className="text-3xl font-bold tracking-tight">You&apos;re a superstar! ⭐</h1>
         <div className="mt-6 overflow-hidden rounded-2xl border border-white/10 bg-white/5">
-          <div className="aspect-[3/4] bg-zinc-900">
+          <div className="aspect-[2/3] bg-zinc-900">
             {result.videoUrl ? (
               <video
                 src={result.videoUrl}
@@ -247,7 +257,7 @@ export default function HeroForm({
             )}
           </div>
         </div>
-        {!result.videoUrl && (
+        {!result.videoUrl && result.videoEnabled !== false && (
           <p className="mt-3 flex items-center justify-center gap-2 text-sm text-zinc-500">
             {result.videoFailed ? (
               'The animation didn’t finish, but your superstar image is live.'

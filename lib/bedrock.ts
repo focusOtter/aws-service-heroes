@@ -5,6 +5,9 @@ import {
 import { AWS_REGION, awsCredentials } from './aws'
 import { ASSETS_BUCKET } from './s3'
 
+// Luma Ray 2 is billed per second of video, so it is opt-in.
+export const VIDEO_ENABLED = process.env.VIDEO_ENABLED === 'true'
+
 const MODEL_ID = process.env.LUMA_MODEL_ID ?? 'luma.ray-v2:0'
 
 const bedrock = new BedrockRuntimeClient({

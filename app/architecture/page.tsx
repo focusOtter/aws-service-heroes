@@ -1,4 +1,5 @@
 import ArchitectureStory from '@/components/ArchitectureStory'
+import { VIDEO_ENABLED } from '@/lib/bedrock'
 
 export const metadata = { title: 'Architecture · AWS Service Superstars' }
 
@@ -17,7 +18,7 @@ export default function ArchitecturePage() {
         has no turnkey primitive for yet.
       </p>
       <div className="mt-8">
-        <ArchitectureStory />
+        <ArchitectureStory videoEnabled={VIDEO_ENABLED} />
       </div>
     </div>
   )

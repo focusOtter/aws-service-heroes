@@ -32,6 +32,7 @@ export type IssueInput = {
   presetName: string
   imageUrl: string
   videoUrl?: string
+  videoPending?: boolean
   githubLogin?: string
   linkedinUrl?: string
 }
@@ -59,9 +60,13 @@ export async function createHeroIssue(
     '',
     `**${input.heroName}**${mention} is the superstar of **${input.serviceName}**.`,
     `Style: ${input.presetName}.`,
-    '',
-    input.videoUrl ? `🎬 [Animated version](${input.videoUrl})` : '_Animation pending or unavailable._',
   ]
+
+  if (input.videoUrl) {
+    lines.push('', `🎬 [Animated version](${input.videoUrl})`)
+  } else if (input.videoPending) {
+    lines.push('', '_Animation pending or unavailable._')
+  }
 
   if (input.linkedinUrl) {
     lines.push('', `🔗 ${input.linkedinUrl}`)
