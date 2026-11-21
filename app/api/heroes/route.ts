@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto'
 import { auth0 } from '@/lib/auth0'
 import { DEFAULT_PRESET, findService, buildImagePrompt, buildVideoPrompt } from '@/lib/services'
 import { generateHeroImage } from '@/lib/gemini'
-import { startHeroVideo } from '@/lib/bedrock'
+import { startHeroVideo, VIDEO_ENABLED } from '@/lib/bedrock'
 import { uploadAsset, cdnUrl } from '@/lib/s3'
 import { putHero, patchHero, listHeroes, type HeroRecord } from '@/lib/dynamo'
 import { createHeroIssue } from '@/lib/github'
@@ -107,6 +107,7 @@ export async function POST(request: NextRequest) {
       serviceName: service.name,
       presetName: preset.name,
       imageUrl,
+      videoPending: VIDEO_ENABLED,
       githubLogin,
       linkedinUrl,
     })
@@ -124,16 +125,18 @@ export async function POST(request: NextRequest) {
 
   // ---- Start Luma async — returns immediately; the completion Lambda fires
   //      when the mp4 lands in S3. Allowed to fail without blocking the image.
-  try {
-    const invocationArn = await startHeroVideo({
-      prompt: buildVideoPrompt(service, preset),
-      image,
-      outputPrefix: `videos/${id}`,
-    })
-    await patchHero(id, { status: 'video_pending', invocationArn })
-  } catch (err) {
-    console.warn('[POST /api/heroes] could not start video — image stands:', err)
-    await patchHero(id, { status: 'video_failed' })
+  if (VIDEO_ENABLED) {
+    try {
+      const invocationArn = await startHeroVideo({
+        prompt: buildVideoPrompt(service, preset),
+        image,
+        outputPrefix: `videos/${id}`,
+      })
+      await patchHero(id, { status: 'video_pending', invocationArn })
+    } catch (err) {
+      console.warn('[POST /api/heroes] could not start video — image stands:', err)
+      await patchHero(id, { status: 'video_failed' })
+    }
   }
 
   return NextResponse.json({
@@ -141,6 +144,7 @@ export async function POST(request: NextRequest) {
     imageUrl,
     originalUrl: originalKey ? cdnUrl(originalKey) : undefined,
     issueUrl,
+    videoEnabled: VIDEO_ENABLED,
   })
 }
 

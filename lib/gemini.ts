@@ -1,9 +1,15 @@
 import { createGoogleGenerativeAI } from '@ai-sdk/google'
-import { generateText } from 'ai'
+import { gateway, generateText } from 'ai'
 
 const google = createGoogleGenerativeAI({
   apiKey: process.env.GEMINI_API_KEY,
 })
+
+// With no GEMINI_API_KEY, route through Vercel AI Gateway (auth via the
+// deployment's OIDC token on Vercel, or AI_GATEWAY_API_KEY locally).
+function imageModel(modelId: string) {
+  return process.env.GEMINI_API_KEY ? google(modelId) : gateway(`google/${modelId}`)
+}
 
 const MODEL = process.env.GEMINI_MODEL ?? 'gemini-3-pro-image'
 // Optional cheaper/lighter model to fall back to when the primary is
@@ -20,7 +26,7 @@ async function runModel(
   selfie: ImageInput,
 ): Promise<GeneratedImage> {
   const result = await generateText({
-    model: google(modelId),
+    model: imageModel(modelId),
     // The default is 2; bump it so a transient 503 demand-spike rides through
     // the SDK's exponential backoff instead of failing the submission.
     maxRetries: 4,

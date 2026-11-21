@@ -11,6 +11,7 @@ type Result = {
   videoUrl?: string
   issueUrl?: string
   videoFailed?: boolean
+  videoEnabled?: boolean
 }
 
 // Long edge cap for the uploaded selfie. iPhone/iPad photos are routinely
@@ -82,7 +83,13 @@ export default function HeroForm({
   // After the image is back, the video is still rendering async (completion
   // Lambda). Poll the job until the video lands so we can swap it in.
   useEffect(() => {
-    if (status !== 'done' || !result || result.videoUrl || result.videoFailed) {
+    if (
+      status !== 'done' ||
+      !result ||
+      result.videoEnabled === false ||
+      result.videoUrl ||
+      result.videoFailed
+    ) {
       return
     }
     const t = setInterval(async () => {
@@ -247,7 +254,7 @@ export default function HeroForm({
             )}
           </div>
         </div>
-        {!result.videoUrl && (
+        {!result.videoUrl && result.videoEnabled !== false && (
           <p className="mt-3 flex items-center justify-center gap-2 text-sm text-zinc-500">
             {result.videoFailed ? (
               'The animation didn’t finish, but your superstar image is live.'
