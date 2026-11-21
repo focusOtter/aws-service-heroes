@@ -96,7 +96,7 @@ export default function Home() {
                 aria-label={`View ${h.heroName}`}
                 className="block w-full text-left"
               >
-                <div className="aspect-[3/4] overflow-hidden bg-zinc-900">
+                <div className="aspect-[2/3] overflow-hidden bg-zinc-900">
                   {h.videoUrl ? (
                     <video
                       src={h.videoUrl}

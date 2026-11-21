@@ -240,7 +240,7 @@ export default function HeroForm({
       <div className="mx-auto max-w-2xl px-6 py-12 text-center">
         <h1 className="text-3xl font-bold tracking-tight">You&apos;re a superstar! ⭐</h1>
         <div className="mt-6 overflow-hidden rounded-2xl border border-white/10 bg-white/5">
-          <div className="aspect-[3/4] bg-zinc-900">
+          <div className="aspect-[2/3] bg-zinc-900">
             {result.videoUrl ? (
               <video
                 src={result.videoUrl}
