@@ -2,7 +2,7 @@ import { createGoogleGenerativeAI } from '@ai-sdk/google'
 import { gateway, generateText } from 'ai'
 
 const google = createGoogleGenerativeAI({
-  apiKey: process.env.GEMINI_API_KEY,
+  apiKey: process.env.GEMINI_API_KEY || undefined,
 })
 
 const hasGoogleKey = Boolean(
