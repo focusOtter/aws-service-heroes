@@ -29,12 +29,13 @@ export default function RootLayout({
               <Link href="/" className="hover:text-white">Gallery</Link>
               <Link href="/architecture" className="hover:text-white">Architecture</Link>
               <Link href="/settings" className="hover:text-white">Settings</Link>
-              <Link
+              {/* Full page load: signed-out visitors are redirected to Auth0, which a client-side navigation can't follow. */}
+              <a
                 href="/form"
                 className="rounded-full bg-[#FF9900] px-4 py-1.5 font-medium text-zinc-950 hover:bg-[#ffad33]"
               >
                 Create yours
-              </Link>
+              </a>
             </div>
           </nav>
         </header>
