@@ -1,4 +1,5 @@
 import { auth0 } from '@/lib/auth0'
+import { GITHUB_POSTING_ENABLED } from '@/lib/features'
 
 export const metadata = { title: 'Settings · AWS Service Superstars' }
 
@@ -14,7 +15,8 @@ async function isGithubConnected(): Promise<boolean> {
 
 export default async function SettingsPage() {
   const session = await auth0.getSession()
-  const githubConnected = session ? await isGithubConnected() : false
+  const githubConnected =
+    session && GITHUB_POSTING_ENABLED ? await isGithubConnected() : false
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-12">
@@ -53,18 +55,27 @@ export default async function SettingsPage() {
                   ✓ Connected
                 </span>
               )}
+              {!GITHUB_POSTING_ENABLED && (
+                <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-zinc-300">
+                  Coming soon
+                </span>
+              )}
             </div>
             <p className="mt-2 text-sm leading-relaxed text-zinc-300">
-              {githubConnected
+              {!GITHUB_POSTING_ENABLED
+                ? 'Soon you’ll be able to post your superstar to the public GitHub gallery under your own account, through Auth0 Token Vault — no personal access token.'
+                : githubConnected
                 ? 'Your GitHub account is linked through Auth0 Token Vault. Gallery issues will be posted as you — no personal access token.'
                 : 'Opt in to “post as me”. We use Auth0 Token Vault to open the gallery issue under your account — no personal access token, and you only do this once.'}
             </p>
+            {GITHUB_POSTING_ENABLED && (
             <a
               href="/auth/connect?connection=github&returnTo=/settings"
               className="mt-4 inline-block rounded-full bg-white/10 px-5 py-2.5 font-medium hover:bg-white/20"
             >
               {githubConnected ? 'Reconnect GitHub' : 'Connect GitHub Account'}
             </a>
+            )}
           </div>
         </>
       )}
