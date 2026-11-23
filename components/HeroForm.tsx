@@ -438,8 +438,8 @@ export default function HeroForm({
         />
       </label>
 
-      <div className={`grid gap-4 ${GITHUB_POSTING_ENABLED ? 'grid-cols-2' : ''}`}>
-        {GITHUB_POSTING_ENABLED && (
+      {GITHUB_POSTING_ENABLED && (
+      <div className="grid grid-cols-2 gap-4">
         <label className="block">
           <span className="text-sm font-medium text-zinc-300">
             GitHub username <span className="text-zinc-500">(optional)</span>
@@ -451,7 +451,6 @@ export default function HeroForm({
             className="mt-2 block w-full rounded-lg border border-white/10 bg-zinc-900 px-3 py-2 text-sm"
           />
         </label>
-        )}
         <label className="block">
           <span className="text-sm font-medium text-zinc-300">
             LinkedIn URL <span className="text-zinc-500">(optional)</span>
@@ -464,6 +463,7 @@ export default function HeroForm({
           />
         </label>
       </div>
+      )}
 
       <label className="flex items-start gap-3 text-sm text-zinc-400">
         <input
