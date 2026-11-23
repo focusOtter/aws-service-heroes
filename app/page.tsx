@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { GITHUB_POSTING_ENABLED } from '@/lib/features'
 
 type GalleryItem = {
   id: string
@@ -67,7 +68,7 @@ export default function Home() {
         </h1>
         <p className="mx-auto mt-4 max-w-xl text-zinc-400">
           Snap a photo, pick a service, and walk away as that service&apos;s
-          superstar — posted to a public GitHub gallery.
+          superstar{GITHUB_POSTING_ENABLED ? ' — posted to a public GitHub gallery' : ''}.
         </p>
         <Link
           href="/form"

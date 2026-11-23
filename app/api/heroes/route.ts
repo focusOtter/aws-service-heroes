@@ -7,6 +7,7 @@ import { startHeroVideo, VIDEO_ENABLED } from '@/lib/bedrock'
 import { uploadAsset, cdnUrl } from '@/lib/s3'
 import { putHero, patchHero, listHeroes, type HeroRecord } from '@/lib/dynamo'
 import { createHeroIssue } from '@/lib/github'
+import { GITHUB_POSTING_ENABLED } from '@/lib/features'
 
 // AWS SDK needs the Node runtime. We return as soon as the image + issue are
 // done and the video job is started; Luma finishes async (completion Lambda).
@@ -99,28 +100,30 @@ export async function POST(request: NextRequest) {
 
   // ---- GitHub issue via Token Vault (image now; Lambda patches video later) -
   let issueUrl: string | undefined
-  try {
-    const { token } = await auth0.getAccessTokenForConnection({ connection: 'github' })
-    const issue = await createHeroIssue({
-      token,
-      heroName,
-      serviceName: service.name,
-      presetName: preset.name,
-      imageUrl,
-      videoPending: VIDEO_ENABLED,
-      githubLogin,
-      linkedinUrl,
-    })
-    issueUrl = issue.url
-    await patchHero(id, { issueNumber: issue.number, issueUrl })
-  } catch (err) {
-    // Common causes: GitHub not connected (token exchange fails), or the repo
-    // is private / the connection lacks public_repo scope (GitHub returns 404).
-    const status = (err as { status?: number })?.status
-    console.warn(
-      `[POST /api/heroes] GitHub issue not posted${status ? ` (HTTP ${status})` : ''}:`,
-      err instanceof Error ? err.message : err,
-    )
+  if (GITHUB_POSTING_ENABLED) {
+    try {
+      const { token } = await auth0.getAccessTokenForConnection({ connection: 'github' })
+      const issue = await createHeroIssue({
+        token,
+        heroName,
+        serviceName: service.name,
+        presetName: preset.name,
+        imageUrl,
+        videoPending: VIDEO_ENABLED,
+        githubLogin,
+        linkedinUrl,
+      })
+      issueUrl = issue.url
+      await patchHero(id, { issueNumber: issue.number, issueUrl })
+    } catch (err) {
+      // Common causes: GitHub not connected (token exchange fails), or the repo
+      // is private / the connection lacks public_repo scope (GitHub returns 404).
+      const status = (err as { status?: number })?.status
+      console.warn(
+        `[POST /api/heroes] GitHub issue not posted${status ? ` (HTTP ${status})` : ''}:`,
+        err instanceof Error ? err.message : err,
+      )
+    }
   }
 
   // ---- Start Luma async — returns immediately; the completion Lambda fires

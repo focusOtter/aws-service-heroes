@@ -1,4 +1,6 @@
-const STEPS: { title: string; body: string; video?: boolean }[] = [
+import { GITHUB_POSTING_ENABLED } from '@/lib/features'
+
+const STEPS: { title: string; body: string; video?: boolean; github?: boolean }[] = [
   {
     title: 'You, captured',
     body: 'Your selfie + chosen AWS service are posted to a Next.js Route Handler on Vercel — login-gated by Auth0.',
@@ -14,6 +16,7 @@ const STEPS: { title: string; body: string; video?: boolean }[] = [
   },
   {
     title: 'Posted as an issue',
+    github: true,
     body: 'Once you connect GitHub, Auth0 Token Vault hands the app a GitHub token (no PAT) to open an issue in the gallery repo — your name on a public, addressable URL.',
   },
   {
@@ -27,7 +30,9 @@ export default function ArchitectureStory({
 }: {
   videoEnabled?: boolean
 }) {
-  const steps = STEPS.filter((s) => videoEnabled || !s.video)
+  const steps = STEPS.filter(
+    (s) => (videoEnabled || !s.video) && (GITHUB_POSTING_ENABLED || !s.github),
+  )
   return (
     <div className="grid gap-4 sm:grid-cols-2">
       {steps.map((s, i) => (

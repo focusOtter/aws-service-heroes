@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import ArchitectureStory from './ArchitectureStory'
+import { GITHUB_POSTING_ENABLED } from '@/lib/features'
 
 type Option = { id: string; name: string }
 type Result = {
@@ -437,6 +438,7 @@ export default function HeroForm({
         />
       </label>
 
+      {GITHUB_POSTING_ENABLED && (
       <div className="grid grid-cols-2 gap-4">
         <label className="block">
           <span className="text-sm font-medium text-zinc-300">
@@ -461,6 +463,7 @@ export default function HeroForm({
           />
         </label>
       </div>
+      )}
 
       <label className="flex items-start gap-3 text-sm text-zinc-400">
         <input
@@ -472,8 +475,10 @@ export default function HeroForm({
         />
         <span>
           I consent to my original photo and an AI-generated version of me
-          appearing in the public AWS Summit NYC gallery, and to the generated
-          version being posted to a public GitHub gallery.
+          appearing in the public AWS Summit NYC gallery
+          {GITHUB_POSTING_ENABLED &&
+            ', and to the generated version being posted to a public GitHub gallery'}
+          .
         </span>
       </label>
 
